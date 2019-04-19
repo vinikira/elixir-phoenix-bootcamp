@@ -28,7 +28,8 @@ defmodule Identicon do
   def build_grid(%Identicon.Image{hex: hex} = image) do
     grid =
       hex
-      |> Enum.chunk(3)
+      |> Enum.chunk_every(3)
+      |> Enum.filter(fn chunked -> length(chunked) == 3 end)
       |> Enum.map(&mirror_row/1)
       |> List.flatten()
       |> Enum.with_index()
@@ -39,7 +40,7 @@ defmodule Identicon do
   def mirror_row(row) do
     [first, second | _tail] = row
 
-    row ++ [first, second]
+    row ++ [second, first]
   end
 
   def filter_odd_squares(%Identicon.Image{grid: grid} = image) do
@@ -60,7 +61,6 @@ defmodule Identicon do
         {top_left, bottom_right}
       end)
 
-    IO.puts(inspect(pixel_map))
     %Identicon.Image{image | pixel_map: pixel_map}
   end
 
